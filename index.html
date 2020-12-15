@@ -24,7 +24,12 @@ form {
   }
   
   label, small {
-    font-size: small;
+    font-size: large;
+  }
+  
+  #send {
+      background-color: red;
+      padding: 20px;
   }
   
 </style>
@@ -32,7 +37,7 @@ form {
 
 <body>
   
-<form action="form.php" method="post" name="contactform">
+<form action="https://go.offineeds.com/form.php" method="post" name="contactform">
   
 <p><label for="first">First Name *</label><br>
 <input maxlength="50" name="first_name" id="first" size="30" type="text" required placeholder="First Name"  /></p>
@@ -51,7 +56,7 @@ form {
 
  
 <small>* Required</small>
-<p><input type="submit" value="Send Message" /></p>
+<p><input type="submit" id="send" value="Register Now for the webinar" /></p>
  
 </form>
   
