@@ -1,27 +1,7 @@
  
 
 <?php
-
-require_once('sendgrid-php/sendgrid-php.php');
-
-$email = new \SendGrid\Mail\Mail();
-$email->setFrom("dm@digitalmarket.com", "DM");
-$email->setSubject("Sending with Twilio SendGrid is Fun");
-$email->addTo("sanjit@growonlinetoday.com", "Example User");
-$email->addContent("text/plain", "and easy to do anywhere, even with PHP");
-$email->addContent(
-    "text/html", "<strong>and easy to do anywhere, even with PHP</strong>"
-);
-$sendgrid = new \SendGrid(getenv('API'));
-try {
-    $response = $sendgrid->send($email);
-    print $response->statusCode() . "\n";
-    print_r($response->headers());
-    print $response->body() . "\n";
-} catch (Exception $e) {
-    echo 'Caught exception: '. $e->getMessage() ."\n";
-}
-
+ 
  
 if(isset($_POST['email'])) {
  
@@ -56,13 +36,13 @@ if(isset($_POST['email'])) {
  
     $first_name = $_POST['first_name']; // required
  
-    $last_name = $_POST['last_name']; // required
+    $company = $_POST['company_name']; // required
  
     $email_from = $_POST['email']; // required
  
     $telephone = $_POST['telephone']; // not required
  
-    $comments = $_POST['comments']; // required
+    
  
      
  
@@ -84,17 +64,12 @@ if(isset($_POST['email'])) {
  
   }
  
-  if(!preg_match($string_exp,$last_name)) {
+  if(!preg_match($string_exp,$company)) {
  
-    $error_message .= '<li><p>Last name appears to be wrong</p></li>';
- 
-  }
- 
-  if(strlen($comments) < 2) {
- 
-    $error_message .= '<li><p>Message appears to be incorrect</p></li>';
+    $error_message .= '<li><p>Company name appears to be wrong</p></li>';
  
   }
+ 
  
   if(strlen($error_message) > 0) {
  
@@ -115,28 +90,59 @@ if(isset($_POST['email'])) {
     }
  
 
+    https://documentation.webinarjam.com/connecting-to-our-api-2/
+    $first_name  = clean_string($first_name);
  
-    $email_message .= "First Name: ".clean_string($first_name)."\n";
+    $company = clean_string($company);
  
-    $email_message .= "Last Name: ".clean_string($last_name)."\n";
+    $email_from = clean_string($email_from);
  
-    $email_message .= "Email Adress: ".clean_string($email_from)."\n";
+    $telephone = clean_string($telephone);
  
-    $email_message .= "Telephone: ".clean_string($telephone)."\n";
+  
+
+    $url = "https://api.webinarjam.com/everwebinar/register";
+    
+    $curl = curl_init($url);
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_POST, true);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    
+    $headers = array(
+       "Content-Type: application/json",
+    );
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+    
+    $data = <<<DATA
+    {"api_key" : "9237518d-50b4-4b26-ba9e-03beeb487dc6",
+    "webinar_id" : "1",
+    "first_name":"$first_name",
+    "last_name":"$company",
+    "phone":"$telephone",
+    "email":"$email_from",
+    "schedule":"2"
+    }
+    
+    DATA;
+
+  
+    
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+    
+    //for debug only!
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+    
+    $resp = curl_exec($curl);
+    curl_close($curl);
  
-    $email_message .= "Comments: ".clean_string($comments)."\n";
- 
-      
- 
-// create email headers
- 
-$headers = 'From: '.$email_from."\r\n".
- 
-'Reply-To: '.$email_from."\r\n" .
- 
-'X-Mailer: PHP/' . phpversion();
- 
-@mail($email_to, $email_subject, $email_message, $headers);  
+    
+    $arr = json_decode($resp);
+
+     $thank = $arr->user->thank_you_url ;
+
+     header("Location: $thank");
+     die();
  
 ?>
  
