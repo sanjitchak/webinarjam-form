@@ -90,7 +90,7 @@ if(isset($_POST['email'])) {
     }
  
 
-    https://documentation.webinarjam.com/connecting-to-our-api-2/
+ 
     $first_name  = clean_string($first_name);
  
     $company = clean_string($company);
@@ -114,7 +114,7 @@ if(isset($_POST['email'])) {
     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
     
     $data = <<<DATA
-    {"api_key" : "9237518d-50b4-4b26-ba9e-03beeb487dc6",
+    {"api_key" : "APIKEY",
     "webinar_id" : "1",
     "first_name":"$first_name",
     "last_name":"$company",
