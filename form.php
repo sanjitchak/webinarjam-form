@@ -120,7 +120,8 @@ if(isset($_POST['email'])) {
     "last_name":"$company",
     "phone":"$telephone",
     "email":"$email_from",
-    "schedule":"2"
+    "schedule":"2",
+    "timezone":"GMT+05:30"
     }
     
     DATA;
